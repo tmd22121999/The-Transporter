@@ -9,7 +9,9 @@ public class PregameManager : MonoBehaviour
     [SerializeField]
     private GameObject previewImage;
     [SerializeField]    
-    private Transform  contentPanel;
+    private GameObject  CostumeContentPanel;
+    [SerializeField]    
+    private GameObject  SkillContentPanel;
 
 
     //test 
@@ -27,6 +29,7 @@ public class PregameManager : MonoBehaviour
 
     private void createButton(){
         float yPosition= 50;
+        // Tạo các nút thay trang phục từ danh sách có sẵn vào trong scroll costume view
         for(int i =0;i<colorButton.Length;i++){
             GameObject button = (GameObject)Instantiate(buttonPrefab);      
             Color changeColor = colorButton[i];
@@ -35,11 +38,27 @@ public class PregameManager : MonoBehaviour
             button.GetComponent<Button>().onClick.AddListener(
                 () => { 
                     this.changeCostume(changeColor);
-                });
-
-            float xPos =((i%3)*3-3)*70;
+                });            
+                
+                float xPos =((i%3)*3-3)*70;
             button.transform.SetPositionAndRotation(new Vector3(xPos, yPosition, 0.0f), new Quaternion(0.0f, 0.0f, 0.0f,0.0f));
-            button.transform.SetParent(contentPanel,false);
+            button.transform.SetParent(CostumeContentPanel.transform,false);
+            if(i%3==2) yPosition -= 180;
+        }
+        yPosition= 50;
+        // Tạo các nút thay kỹ năng từ danh sách có sẵn vào trong scroll skill view
+        for(int i =0;i<colorButton.Length;i++){
+            GameObject button = (GameObject)Instantiate(buttonPrefab);      
+            Color changeColor = colorButton[i];
+            button.GetComponent<Image>().color = changeColor ;   
+            
+            button.GetComponent<Button>().onClick.AddListener(
+                () => { 
+                    this.upgradeSkill(0);
+                });
+                float xPos =((i%3)*3-3)*70;
+            button.transform.SetPositionAndRotation(new Vector3(xPos, yPosition, 0.0f), new Quaternion(0.0f, 0.0f, 0.0f,0.0f));
+            button.transform.SetParent(SkillContentPanel.transform,false);
             if(i%3==2) yPosition -= 180;
         }
     }
@@ -52,10 +71,36 @@ public class PregameManager : MonoBehaviour
         return;
     }
 
-    public void changeCostume(Color colorChange){
+    public enum TabID {Costume=0, Skill=1,Map=2};
+
+    public void changeTab(int tabID){
+        switch (tabID){
+            case (int)TabID.Costume:
+                CostumeContentPanel.SetActive(true);
+                SkillContentPanel.SetActive(false);
+                break;
+            case (int)TabID.Skill:
+                CostumeContentPanel.SetActive(false);
+                SkillContentPanel.SetActive(true);
+                break;
+            case (int)TabID.Map:
+            Debug.Log("test");
+                gameObject.GetComponent<Animator>().Play("ChangeTabToMap", -1, 0f);
+                break;
+            default:
+                break;
+
+        }
+    }
+
+    private void changeCostume(Color colorChange){
         // Debug.Log(newColor);
         previewImage.GetComponent<Image>().color=colorChange;
         GameManagers.Instance.playerData.color=colorChange;
+        return;
+    }
+    private void upgradeSkill(int skillID){
+        Debug.Log(GameManagers.Instance.playerData.upgradeSkill(skillID)); 
         return;
     }
     

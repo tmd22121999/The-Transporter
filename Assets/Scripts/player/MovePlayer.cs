@@ -18,11 +18,10 @@ public class MovePlayer : MonoBehaviour
     void Update()
     {
         Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0f);
-        transform.position += movement * Time.deltaTime * movementSpeed;
+        transform.position += movement * Time.deltaTime * (movementSpeed+GameManagers.Instance.playerData.speedLevel*0.5f);
 
 
-
-        float horizontalMove = Input.GetAxisRaw("Horizontal") * movementSpeed;
+        float horizontalMove = Input.GetAxisRaw("Horizontal") * (movementSpeed+GameManagers.Instance.playerData.speedLevel*0.5f);
         animator.SetFloat("Horizontal", horizontalMove);
 
        
